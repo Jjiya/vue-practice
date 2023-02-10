@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>끝말잇기</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+</head>
+<body>
+
+<div id="root">
+  <h3>끝말잇기</h3>
+  <div>제시어: <b>{{word}}</b></div>
+  <form v-on:submit="onSubmitForm">
+    <input type="text" v-model="value" ref="valueInput">
+    <button type="submit">입력</button>
+  </form>
+  <div>{{result}}</div>
+
+  <h4>결과</h4>
+  <div v-for="answer in answerList">
+    {{answer}}
+  </div>
+</div>
+
+<script>
+  const app = new Vue({
+    el: "#root",
+    data: {
+      word: "김혜지",
+      result: "",
+      value: "",
+      answerList: [this.word ?? ""]
+    },
+    methods: {
+      onSubmitForm(e) {
+        e.preventDefault();
+
+        if (this.value.length < 2) {
+          this.result = "2글자 이상 입력해주세요.";
+          this.focusInput();
+          return;
+        }
+
+        if (this.checkAnswer()) {
+          if (this.answerList.includes(this.value)) {
+            this.result = `(${this.value}) 이미 사용한 단어입니다.`;
+            this.value = "";
+            this.focusInput();
+
+            return;
+          }
+
+          this.result = "정답입니다.";
+          this.word = this.value;
+          this.answerList.push(this.word);
+        } else {
+          this.result = "틀렸습니다.";
+        }
+
+        this.value = "";
+        this.focusInput();
+      },
+      checkAnswer() {
+        return this.value.startsWith(this.getLastCharacter(this.word));
+      },
+      getLastCharacter(word) {
+        return word.slice(-1);
+      },
+      focusInput(){
+        this.$refs.valueInput.focus();  // https://vuejs.org/guide/essentials/template-refs.html
+      }
+    }
+  });
+</script>
+</body>
+</html>
