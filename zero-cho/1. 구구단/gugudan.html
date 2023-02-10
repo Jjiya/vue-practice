@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>구구단</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+</head>
+<body>
+
+<div id="root">
+  <div>{{first}} * {{second}}는?</div>
+  <form>
+    <input type="number" v-model="value">
+    <button>입력</button>
+
+    <div>{{value}}</div>
+  </form>
+</div>
+
+<script>
+  const app = new Vue({
+    el: "#root",
+    data: {
+        first: Math.ceil(Math.random() * 9),
+        second: Math.ceil(Math.random() * 9),
+        value: "",
+        result: "",
+    },
+    methods: {}
+  });
+</script>
+
+</body>
+</html>
