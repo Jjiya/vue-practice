@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Enabling Import maps</title>
+  <!--  https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script/type/importmap -->
+  <!--  설명에 따르면 improt할 모듈을 json 타입으로 선언하면 된다. -->
+  <!--  Chromium 기반에서 지원됨, 다른 브라우저의 경우 지원 여부를 확인하고, 지원하지 않는다면 es-module-shims을 이용해 polyfill 해야한다고 함--->
+  <script type="importmap">
+  {
+    "imports": {
+      "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="app"> {{ message }}</div>
+
+  <script type="module">
+    import {createApp} from "vue";
+
+    createApp({
+      data() {
+        return {
+          message: 'Hello World and Vue!'
+        }
+      }
+    }).mount('#app');
+  </script>
+</body>
+</html>
