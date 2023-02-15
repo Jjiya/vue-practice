@@ -8,9 +8,14 @@
 <body>
 
 <div id="root">
-  <word-relay></word-relay>
-  <word-relay></word-relay>
-  <word-relay></word-relay>
+  <!--
+    <WordRelay startWord="김혜지"/>
+    > 불가능: DOM templates에서는 닫힘 태그를 명시적으로 선언해줘야 함
+    >> https://vuejs.org/guide/essentials/component-basics.html#dom-template-parsing-caveats
+  -->
+  <word-relay start-word="김혜지"></word-relay>  <!-- DOM 템플릿에서는 속성 선언 시 kebab case로 해야함 -->
+  <word-relay start-word="초밥"></word-relay>
+  <word-relay start-word="뷰"></word-relay>
 </div>
 
 <script>
@@ -18,23 +23,25 @@
   Vue.component("word-relay", { // 전역 컴포넌트
     template: `
       <div class="parents"> <!-- 원래 부모 태그에 template 태그 사용이 가능한데, cdn으로 불러오면 불가능하게 됨(webpack을 쓰는 이유 +1)-->
-        <div>{{ word }}</div>
-        <form v-on:submit="onSubmitForm">
-          <input type="text" v-model="value" ref="answer">
-          <button type="submit">입력</button>
-        </form>
-        <div>{{ result }}</div>
+      <div>{{ word }}</div>
+      <form v-on:submit="onSubmitForm">
+        <input type="text" v-model="value" ref="answer">
+        <button type="submit">입력</button>
+      </form>
+      <div>{{ result }}</div>
       </div>
     `,  // 템플릿 생성 시 리액트처럼 하나의 부모 태그 안에 태그들을 집어넣어야함 e.g) .parents
     data() {
       // 컴포넌트는 참조받기 때문에 data를 함수로 변경해줘야함
       // 컴포넌트는 재활용되기 때문에 각 컴포넌트마다 다른 값을 내려 받아야함
       return {
-        word: "김혜지",
+        word: this.startWord,
         result: "",
         value: ""
       }
     },
+    // props: https://vuejs.org/guide/components/props.html#one-way-data-flow
+    props:["startWord"],  //props 받아올 때 문자열로 값을 나열해야함, json 파싱 시 kebab-case -> camel-case 변환됨
     methods: {
       onSubmitForm(e) {
         e.preventDefault();
@@ -51,11 +58,14 @@
       }
     }
   });
+
+  app.component("WordRelay", WordRelay);
 </script>
 <script>
   const app = new Vue({
     el: "#root",
   });
+
 </script>
 </body>
 </html>
