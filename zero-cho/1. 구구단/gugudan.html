@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>구구단</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+</head>
+<body>
+
+<div id="root">
+  <div>{{first}} * {{second}}는?</div>
+  <form v-on:submit="onSubmitForm">
+    <input type="number" v-model="value" ref="answer">
+    <button type="submit">입력</button>
+  </form>
+  <div id="result">{{result}}</div>
+</div>
+
+<script>
+  const app = new Vue({
+    el: "#root",
+    data: {
+      first: Math.ceil(Math.random() * 9),
+      // first:  this.getRandomInt(), // <- 얘는 작동 안함. 아직 methods가 로딩되기 전이라 못불러옴.(Uncaught TypeError: this.getRandomInt is not a function)
+      second: Math.ceil(Math.random() * 9),
+      value: "",
+      result: "",
+    },
+    methods: {
+      onSubmitForm(e) {
+        e.preventDefault();
+
+        if (this.getAnswer() === parseInt(this.value)) {
+          this.result = "정답";
+          this.first = this.getRandomInt();
+          this.second = this.getRandomInt();
+        } else {
+          this.result = "땡";
+        }
+
+        this.value = "";
+        this.$refs.answer.focus();  // $refs를 남용하는 것은 좋지 않음
+        //  this.$refs.answer.value = 3 이런 식으로 데이터를 직접 건드는 것은 데이터와 화면의 불일치를 불러옴
+      },
+      getAnswer() {
+        return this.first * this.second;
+      },
+      getRandomInt() {
+        return Math.ceil(Math.random() * 9);
+      }
+    }
+  });
+</script>
+
+</body>
+</html>

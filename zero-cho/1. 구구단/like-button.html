@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>좋아요</title>
+<!--
+  cdn이 vue org에 있는 주소대신 https://v2.vuejs.org/v2/guide/installation.html 에 있는 주소를 사용해야 먹힘
+  v2
+ -->
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.7.14/dist/vue.js"></script>
+</head>
+<body>
+  <div id="root">
+    <button v-on:click="onClickButton">Like</button>
+    <div v-if="liked">좋아요 눌렀음</div>
+    <div v-else>좋아요 안눌렀음</div>
+    <div v-if="1===1">
+      v 속성에 js코드 쓸 수 있음
+    </div>
+  </div>
+
+  <script>
+    const app = new Vue({
+      el: "#root",
+      data: {
+        liked: false
+      },
+      methods: {
+        onClickButton() {
+          //this = data를 의미
+          this.liked = !this.liked;
+        }
+      }
+    });
+  </script>
+</body>
+</html>
