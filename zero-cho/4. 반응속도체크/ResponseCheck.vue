@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="screen">{{ message }}</div>
+    <div id="screen" v-bind:class="state">{{ message }}</div>
     <div>
       <div>평균 시간: {{}}</div>
       <button @click="onReset">리셋</button>
@@ -24,4 +24,25 @@ export default {
 }
 </script>
 
-<style></style>
+<style scoped>
+/*scoped: 현재 컴포넌트에서만 css가 적용되게끔 범위 적용하는 것*/
+#screen {
+  width: 300px;
+  height: 200px;
+  text-align: center;
+  user-select: none;
+}
+
+#screen.waiting {
+  background-color: aqua;
+}
+
+#screen.ready {
+  background-color: red;
+  color: #fff;
+}
+
+#screen.now {
+  background-color: green;
+}
+</style>

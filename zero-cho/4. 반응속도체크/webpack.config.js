@@ -13,10 +13,19 @@ module.exports = {
     app: path.join(__dirname, "main.js"),  // 하나로 합쳐질 파일의 경로
   },
   module: {   // webpack의 핵심인 module!
-    rules: [{ // js가 아닌 것들이 추가될 때마다 rules에 loader를 등록해주면 그 파일들을 js로 변환해주게 됨 
-      test: /\.vue$/,
-      loader: "vue-loader",
-    }],  // 파일을 하나로 합칠 때 어떤 식으로 합칠 지 || 처리할 지 정하는 부분
+    rules: [
+      { // js가 아닌 것들이 추가될 때마다 rules에 loader를 등록해주면 그 파일들을 js로 변환해주게 됨
+        test: /\.vue$/,
+        loader: "vue-loader",
+      },
+      {
+        test: /\.css$/,
+        use: [
+          'vue-style-loader',
+          'css-loader'
+        ]
+      }
+    ],  // 파일을 하나로 합칠 때 어떤 식으로 합칠 지 || 처리할 지 정하는 부분
   },
   plugins: [
     new VueLoaderPlugin()
