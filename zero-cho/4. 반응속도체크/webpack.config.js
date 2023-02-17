@@ -36,7 +36,13 @@ module.exports = {
     // filename: "app.js",
     // entry에서 이름을 설정했으니 [name]이라고 하면 entry에서 설정한 이름 값인 app이 들어감
     path: path.join(__dirname, "dist"), // 하나로 합쳐진 결과물을 저장할 폴더 지정 (dist = distribution의 약어)
-
+    publicPath: "/dist",  // webpack-dev-server 사용 시 추가
   },
-//  가장 중요한 4가지 설정 entry, module, plugins, output
+  devServer: {
+  // webpack 5 + webpack-dev-server 사용 시 "Cannot GET /" 에러 발생해서 아래 주소 참고하여 수정함
+  // https://stackoverflow.com/questions/71602863/webpack-dev-server-cannot-get
+    static: {
+      directory: path.join(__dirname, '/')
+    }
+  },
 };

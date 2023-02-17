@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div id="screen" v-bind:class="state">{{ message }}</div>
+    <div id="screen" v-bind:class="state" @click="onClickScreen">{{ message }}</div>
     <div>
       <div>평균 시간: {{}}</div>
       <button @click="onReset">리셋</button>
@@ -19,6 +19,19 @@ export default {
   },
   methods: {
     onReset() {
+    },
+    onClickScreen() {
+      switch (this.state) {
+        case "waiting":
+          this.state = "now";
+          break;
+        case "now":
+          this.state = "ready";
+          break;
+        case "ready":
+          this.state = "waiting";
+          break;
+      }
     }
   }
 }
