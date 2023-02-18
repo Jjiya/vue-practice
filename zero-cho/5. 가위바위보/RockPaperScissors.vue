@@ -22,6 +22,18 @@ const rspCoordinate = {
 
 let interval = null;
 
+const scores = {
+  "바위": 0,
+  "가위": 1,
+  "보": -1
+}
+
+let getComputerChoice = (imgCoordinate) => {
+  return Object.entries(rspCoordinate).find((value) => value[1] === imgCoordinate)[0];
+}
+
+let canPlay = true;
+
 export default {
   data() {
     return {
@@ -35,12 +47,53 @@ export default {
       return {
         background: `url(https://en.pimg.jp/023/182/267/1/23182267.jpg) ${this.imgCoordinate} 0`,
         width: "150px",
-        height: "243px"
+        height: "210px"
       }
     }
   },
   methods: {
     onClickButton(choice) {
+      if (canPlay) {
+        canPlay = !canPlay;
+      } else {
+        return;
+      }
+
+      clearInterval(interval);
+
+      const myScore = scores[choice];
+      const computerScore = scores[getComputerChoice(this.imgCoordinate)];
+      const diff = myScore - computerScore;
+
+      if (diff === 0) {
+        this.result = "비겼습니다.";
+      } else if ([-1, 2].includes(diff)) {
+        this.result = "이겼습니다.";
+        this.score++;
+      } else {
+        this.result = "졌습니다.";
+        this.score--;
+      }
+
+      setTimeout(() => {
+        this.changeHand();
+        canPlay = true;
+      }, 1000);
+    },
+    changeHand() {
+      interval = setInterval(() => {
+        switch (this.imgCoordinate) {
+          case rspCoordinate.바위:
+            this.imgCoordinate = rspCoordinate.가위;
+            break;
+          case rspCoordinate.가위:
+            this.imgCoordinate = rspCoordinate.보;
+            break;
+          case rspCoordinate.보:
+            this.imgCoordinate = rspCoordinate.바위;
+            break;
+        }
+      }, 100);
     }
   },
   // vue3 라이프사이클 함수 종류: https://learnvue.co/tutorials/vue-lifecycle-hooks-guide
@@ -56,20 +109,7 @@ export default {
     errorCaptured -> onErrorCaptured
    */
   mounted() {
-    console.log("mounted");
-    interval = setInterval(() => {
-      switch (this.imgCoordinate) {
-        case rspCoordinate.바위:
-          this.imgCoordinate = rspCoordinate.가위;
-          break;
-        case rspCoordinate.가위:
-          this.imgCoordinate = rspCoordinate.보;
-          break;
-        case rspCoordinate.보:
-          this.imgCoordinate = rspCoordinate.바위;
-          break;
-      }
-    }, 100);
+    this.changeHand();
   },
   beforeUnmount() {
     clearInterval(interval);  // 메모리 누수 방지
