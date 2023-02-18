@@ -20,6 +20,8 @@ const rspCoordinate = {
   "보": "-284px"
 };
 
+let interval = null;
+
 export default {
   data() {
     return {
@@ -39,8 +41,38 @@ export default {
   },
   methods: {
     onClickButton(choice) {
-      this.imgCoordinate = rspCoordinate[choice];
     }
+  },
+  // vue3 라이프사이클 함수 종류: https://learnvue.co/tutorials/vue-lifecycle-hooks-guide
+  /* vue 2 -> vue 3
+    beforeCreate -> use setup()
+    created -> use setup()
+    beforeMount -> onBeforeMount
+    mounted -> onMounted
+    beforeUpdate -> onBeforeUpdate
+    updated -> onUpdated
+    beforeDestroy -> onBeforeUnmount
+    destroyed -> onUnmounted
+    errorCaptured -> onErrorCaptured
+   */
+  mounted() {
+    console.log("mounted");
+    interval = setInterval(() => {
+      switch (this.imgCoordinate) {
+        case rspCoordinate.바위:
+          this.imgCoordinate = rspCoordinate.가위;
+          break;
+        case rspCoordinate.가위:
+          this.imgCoordinate = rspCoordinate.보;
+          break;
+        case rspCoordinate.보:
+          this.imgCoordinate = rspCoordinate.바위;
+          break;
+      }
+    }, 100);
+  },
+  beforeUnmount() {
+    clearInterval(interval);  // 메모리 누수 방지
   }
 }
 </script>
