@@ -11,11 +11,30 @@
 </template>
 
 <script>
+import LottoBall from "./LottoBall";
+
+const getWinNumbers = () => {
+  const candidate = Array(45).fill().map((value, idx) => idx + 1);
+  const shuffle = [];
+
+  while (candidate.length > 0) {
+    shuffle.push(candidate.splice(Math.floor(Math.random() & candidate.length), 1)[0]);
+  }
+
+  const bonusNumber = shuffle[-1];
+  const winNumbers = shuffle.splice(0, 6).sort((prev, current) => prev - current);
+
+  return [...winNumbers, bonusNumber];
+}
+
 export default {
-  components: {},
+  components: {
+    LottoBall,  // 파스칼 케이스와 케밥 케이스 자동 호환가능 => "lotto-ball" : LottoBall 을 왼쪽과 같이 줄일 수 있음
+  },
   data() {
     return {
-      winBalls: [],
+      winNumbers: getWinNumbers(),
+      winBalls: [], // 시각적 효과 위함
       bonus: null,
       redo: false,
     };
