@@ -15,7 +15,7 @@
 
     <div> 시도: {{ tries.length }}</div>
     <ul>
-      <li v-for="trying in tries">
+      <li v-for="trying in tries" :key="trying.tryNumber">
         <div>{{ trying.tryNumber }}</div>
         <div>- {{ trying.result }}</div>
       </li>
