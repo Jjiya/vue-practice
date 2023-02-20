@@ -49,7 +49,7 @@ export default {
       this.bonus = null;
       this.redo = false;
 
-      this.showBalls();
+      // this.showBalls();  >> watch에서 실행하게끔 변경함
     },
     showBalls() {
       for (let i = 0; i < this.winNumbers.length - 1; i++) {
@@ -70,8 +70,12 @@ export default {
   beforeUnmount() {
     timeOutList.forEach(timeout => clearTimeout(timeout));
   },
-  watch() {
-
+  watch: {  // 최후의 수단으로 쓰기. 값 참조가 잘못되면 무한 반복에 빠질 수 있음
+    redo(value, oldValue){ // 감시하고 싶은 data 이름을 함수 명으로 작성
+      if (value === false) {
+        this.showBalls();
+      }
+    }
   },
 }
 </script>
