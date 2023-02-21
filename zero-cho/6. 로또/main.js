@@ -1,4 +1,4 @@
 import { createApp } from 'vue'
-import RockPaperScissors from "./LottoGenerator";
+import LottoGenerator from "./LottoGenerator";
 
-createApp(RockPaperScissors).mount("#root");
+createApp(LottoGenerator).mount("#root");
