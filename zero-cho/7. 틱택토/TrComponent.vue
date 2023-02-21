@@ -15,7 +15,7 @@ export default {
   name: "TrComponent",
   components: {TdComponent},
   data() {
-    return{
+    return {
       parent: "부모인 tr이다."
     }
   },
