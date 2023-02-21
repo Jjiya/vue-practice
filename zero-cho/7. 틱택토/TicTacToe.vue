@@ -1,5 +1,8 @@
 <template>
-  <table-component :table-data="tableData"></table-component>
+  <div>
+    <table-component :table-data="tableData"></table-component>
+    <div>{{turn}}님의 차례입니다.</div>
+  </div>
 </template>
 
 <script>
@@ -13,7 +16,9 @@ export default {
         ["", "", ""],
         ["", "", ""],
         ["", "", ""]
-      ]
+      ],
+      turn: "O",
+
     };
   },
   computed: {},
@@ -21,8 +26,14 @@ export default {
 }
 </script>
 
-<style scoped>
-#결과창 {
-  height: 42px;
+<style>
+table {
+  border-collapse: collapse;
+}
+td {
+  border: 1px solid black;
+  width: 40px;
+  height: 40px;
+  text-align: center;
 }
 </style>

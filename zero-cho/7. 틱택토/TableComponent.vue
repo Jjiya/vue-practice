@@ -1,5 +1,8 @@
 <template>
-  <tr-component v-for="(rowData, index) in tableData" :row-data="rowData" :row-index="index"></tr-component>
+  <tr-component v-for="(rowData, rowIndex) in tableData"
+                :key="rowIndex"
+                :row-data="rowData" :row-index="rowIndex"
+  ></tr-component>
 </template>
 
 <script>

@@ -1,8 +1,9 @@
 <template>
   <tr>
-    <td-component v-for="(cellData, index) in rowData"
+    <td-component v-for="(cellData, cellIndex) in rowData"
+                  :key="cellIndex"
                   :row-index="rowIndex"
-                  :cell-data="cellData" :cell-index="index"
+                  :cell-data="cellData" :cell-index="cellIndex"
     ></td-component>
   </tr>
 </template>
@@ -13,6 +14,11 @@ import TdComponent from "./TdComponent";
 export default {
   name: "TrComponent",
   components: {TdComponent},
+  data() {
+    return{
+      parent: "부모인 tr이다."
+    }
+  },
   props: {
     rowData: Array,
     rowIndex: Number
