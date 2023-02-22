@@ -1,9 +1,19 @@
 <template>
   <div>
     <div>{{ turn }}님의 차례입니다.</div>
-    <table-component/>
+    <!--    <table-component/>-->
+    <table>
+      <tr v-for="(rowData, rowIndex) in tableData" :key="rowIndex">
+        <td v-for="(cellData, cellIndex) in rowData"
+            :key="cellIndex"
+            @click="onClickTd(rowIndex, cellIndex)"
+        >
+          {{ cellData }}
+        </td>
+      </tr>
+    </table>
     <dialog open v-if="winner">
-      {{turnMessage}}
+      {{ turnMessage }}
       <form method="dialog">
         <button value="cancel" @click="closePopup">닫기</button>
       </form>
@@ -14,7 +24,7 @@
 <script>
 import {mapState, mapGetters} from "vuex";
 import TableComponent from "./TableComponent";
-import store, {NO_WINNER} from "./store";
+import store, {CHANGE_TURN, CLICK_CELL, NO_WINNER, RESET_GAME, SET_WINNER} from "./store";
 
 export default {
   store,
@@ -25,7 +35,7 @@ export default {
     };
   },
   computed: {
-    ...mapState(["turn", "winner"]),
+    ...mapState(["turn", "winner", "tableData"]),
     // ...mapState({  // 객체 형으로도 가능
     //   winner : state => state.winner,
     //   turnState : "turn",  // <= state에 있는 키 값 변경 시 이런 방법도 가능
@@ -45,7 +55,67 @@ export default {
   methods: {
     closePopup() {
       this.$store.commit(NO_WINNER);
-    }
+    },
+    onClickTd(rowIndex, cellIndex) {  // vuex를 이용하면 state 변경 시 computed가 재렌더링 돼서 컴포넌트를 잘게 쪼개어봤자 렌더링이 component 개수대로 일어나기 때문에 쪼개지않고 여기다가 합침
+      if (this.tableData[rowIndex][cellIndex]) { // 이미 눌러진 칸일 때
+        return;
+      }
+      this.$store.commit(CLICK_CELL, {row: rowIndex, cell: cellIndex}); // commit -> mutation 호출
+
+      this.tableData[rowIndex][cellIndex] = this.turn;
+
+      if (this.checkWin(rowIndex, cellIndex)) {  // 이긴 경우 (3줄 달성)
+        this.$store.commit(SET_WINNER, this.turn);
+        this.$store.commit(RESET_GAME);
+        return;
+      }
+
+      let allCheck = true;
+
+      this.tableData.forEach(row => {
+        if (row.includes("")) {
+          allCheck = false;
+        }
+      });
+
+      if (allCheck) { // 무승부
+        this.$store.commit(NO_WINNER);
+        this.$store.commit(RESET_GAME);
+      } else {
+        this.$store.commit(CHANGE_TURN);
+      }
+    },
+    checkWin(rowIndex, cellIndex) {  // 이겼는지 확인
+      const score = {
+        horizon: 0,
+        vertical: 0,
+        leftDiagonal: 0,
+        rightDiagonal: 0,
+      };
+
+      for (let i = 0; i < this.tableData.length; i++) {
+        if (this.tableData[rowIndex][i] === this.turn) {
+          score.horizon += 1;
+        }
+        if (this.tableData[i][cellIndex] === this.turn) {
+          score.vertical += 1;
+        }
+        if (this.tableData[i][i] === this.turn) {
+          score.leftDiagonal += 1;
+        }
+        if (this.tableData[i][this.tableData.length - i - 1] === this.turn) {
+          score.rightDiagonal += 1;
+        }
+      }
+
+      for (let direction in score) {
+        if (score[direction] === this.tableData.length) {
+          return true;
+        }
+      }
+
+      return false;
+    },
   }
 }
 </script>
