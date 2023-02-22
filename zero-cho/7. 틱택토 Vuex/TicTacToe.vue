@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div>{{ store.turn }}님의 차례입니다.</div>
-    <table-component :table-data="store.tableData"></table-component>
-    <dialog open v-if="store.winner">
-      {{ store.winner }}님의 승리입니다!
+    <div>{{ turn }}님의 차례입니다.</div>
+    <table-component />
+    <dialog open v-if="winner">
+      {{ winner }}님의 승리입니다!
       <form method="dialog">
-        <button value="cancel" @click="store.winner = null">닫기</button>
+        <button value="cancel" @click="closePopup">닫기</button>
       </form>
     </dialog>
   </div>
@@ -13,19 +13,27 @@
 
 <script>
 import TableComponent from "./TableComponent";
-import {store} from "./EventBus";
+import store, {NO_WINNER} from "./store";
 
 export default {
+  store,
   components: {TableComponent},
   data() {
-    return {
-      store
-    };
+    return {};
   },
-  computed: {},
-  methods: {},
-  created() { // 사용자 정의 event 등록 가능
+  computed: {
+    turn() {
+      return this.$store.state.turn;
+    },
+    winner() {
+      return this.$store.state.winner;
+    }
   },
+  methods: {
+    closePopup() {
+      this.$store.commit(NO_WINNER);
+    }
+  }
 }
 </script>
 

@@ -3,7 +3,7 @@
     <td-component v-for="(cellData, cellIndex) in rowData"
                   :key="cellIndex"
                   :row-index="rowIndex"
-                  :cell-data="cellData" :cell-index="cellIndex"
+                  :cell-index="cellIndex"
     ></td-component>
   </tr>
 </template>
@@ -19,8 +19,12 @@ export default {
       parent: "부모인 tr이다."
     }
   },
+  computed: {
+    rowData() {
+      return this.$store.state.tableData[this.rowIndex];
+    }
+  },
   props: {
-    rowData: Array,
     rowIndex: Number
   }
 }
