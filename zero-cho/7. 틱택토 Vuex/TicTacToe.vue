@@ -1,7 +1,30 @@
 <template>
   <div>
     <div>{{ turn }}님의 차례입니다.</div>
-    <!--    <table-component/>-->
+    <table-component>
+      <!--
+        slot -> data를 parent에서 관리할 수 있는 장점 (component는 분리되지만)
+        ioc 느낌?
+        뭔말인지 모르겠으면 강의 다시 보기 => https://www.inflearn.com/course/lecture?courseSlug=web-game-vue&unitId=23201&tab=curriculum
+
+        slot이 있으면 (추후 라이브러리 사용 시) 커스터마이징하기가 편함
+        -->
+      <tr v-for="(rowData, rowIndex) in tableData" :key="rowIndex">
+        <!--
+            v-for의 key 사용 시 index를 사용하지 않는게 좋은 경우
+            배열의 값이 삭제될 경우
+            => 삭제된 요소의 뒤에있는 값이 앞으로 땡겨지면서 화면에 다시 그려지게 됨
+            index + Math.random()이나 고유한 구별자가 있으면 붙여줘도 좋음
+        -->
+        <td v-for="(cellData, cellIndex) in rowData"
+            :key="cellIndex"
+            @click="onClickTd(rowIndex, cellIndex)"
+        >
+          {{ cellData }}
+        </td>
+      </tr>
+    </table-component>
+    <hr/>
     <table>
       <tr v-for="(rowData, rowIndex) in tableData" :key="rowIndex">
         <td v-for="(cellData, cellIndex) in rowData"
