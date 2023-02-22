@@ -3,7 +3,7 @@
 </template>
 
 <script>
-
+import {mapState} from "vuex";
 import {CLICK_CELL, RESET_GAME, CHANGE_TURN, NO_WINNER, SET_WINNER} from "./store";
 
 export default {
@@ -16,15 +16,22 @@ export default {
     return {}
   },
   computed: {  // vuex state 사용을 위해서는 computed에 연결해줘야함,
-    cellData(){
-      return this.tableData[this.rowIndex][this.cellIndex];
-    },
-    tableData() {
-      return this.$store.state.tableData;
-    },
-    turn(){
-      return this.$store.state.turn;
-    }
+    ...mapState({
+      tableData: state => state.tableData,
+      turn: state => state.turn,
+      cellData(state){
+        return state.tableData[this.rowIndex][this.cellIndex];
+      }
+    }),
+    // cellData(){
+    //   return this.tableData[this.rowIndex][this.cellIndex];
+    // },
+    // tableData() {
+    //   return this.$store.state.tableData;
+    // },
+    // turn(){
+    //   return this.$store.state.turn;
+    // }
   },
   methods: {
     onClickTd() {

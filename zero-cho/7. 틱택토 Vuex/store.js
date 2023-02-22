@@ -20,8 +20,11 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
       winner: null,
     }
   },
-  getters: {  // vue의 computed와 비슷
-
+  getters: {  // vue의 computed와 비슷 (cashing 가능)
+    // state에 있는 값 + 추가적인 작업을 할 때
+    turnMessage(state) {
+      return state.turn + "님이 승리하셨습니다.";
+    },
   },
   mutations: {  // state를 동기적으로 수정할 때 사용. state 수정시 mutations를 거쳐서 수정하는 것을 권장한다..
     // 데이터 수정 시 기록이 남아서 데이터 변경 추적이 용이함
