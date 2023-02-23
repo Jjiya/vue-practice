@@ -12,13 +12,13 @@ export const INCREMENT_TIMER = "INCREMENT_TIMER";
 // 숫자 코드로 현재 배열의 상태를 표시함
 export const CODE = {
   OPENED: 0,  // 0이상이면 다 OPENED
-  NORMAL: -1,
+  NORMAL: -1, // 빈칸
   QUESTION: -2,
   FLAG: -3,
-  QUESTION_MINE: -4,
-  FLAG_MINE: -5,
+  QUESTION_MINE: -4,  // 지뢰에 ? 를 설치한 경우 ? 제거 시 다시 지뢰로 돌려주기 위함
+  FLAG_MINE: -5,  // 지뢰에 깃발을 설치한 경우 깃발 제거 시 다시 지뢰로 돌려주기 위함
   CLICKED_MINE: -6,
-  MINE: -7,
+  MINE: -7, // 지뢰
 };
 
 const plantMine = (row, cell, mine) => {
@@ -86,15 +86,31 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
       state.timer = 0;
       state.halted = false;
     },
-    [OPEN_CELL](state) {
+    [OPEN_CELL](state, {row, cell}) {
+      state.tableData[row][cell] = CODE.OPENED;
     },
     [CLICK_MINE](state) {
     },
-    [FLAG_CELL](state) {
+    [FLAG_CELL](state, {row, cell}) {
+      if (state.tableData[row][cell] === CODE.MINE || state.tableData[row][cell] === CODE.QUESTION_MINE) {
+        state.tableData[row][cell] = CODE.FLAG_MINE;
+      } else {
+        state.tableData[row][cell] = CODE.FLAG;
+      }
     },
-    [QUESTION_CELL](state) {
+    [QUESTION_CELL](state, {row, cell}) {
+      if (state.tableData[row][cell] === CODE.MINE || state.tableData[row][cell] === CODE.FLAG_MINE) {
+        state.tableData[row][cell] = CODE.QUESTION_MINE;
+      } else {
+        state.tableData[row][cell] = CODE.QUESTION;
+      }
     },
-    [NORMALIZE_CELL](state) {
+    [NORMALIZE_CELL](state, {row, cell}) {
+      if (state.tableData[row][cell] === CODE.QUESTION_MINE || state.tableData[row][cell] === CODE.FLAG_MINE) {
+        state.tableData[row][cell] = CODE.MINE;
+      } else {
+        state.tableData[row][cell] = CODE.NORMAL;
+      }
     },
     [INCREMENT_TIMER](state) {
       state.timer++;

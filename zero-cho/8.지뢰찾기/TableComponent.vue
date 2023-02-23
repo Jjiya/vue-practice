@@ -4,7 +4,13 @@
       <td v-for="(cellData, cellIndex) in rowData"
           :key="'mine-cell' + cellIndex"
           :style="cellDataStyle(rowIndex, cellIndex)"
+          @click="onClickTd(rowIndex, cellIndex)"
+          @contextmenu.prevent="onRightClickTd(rowIndex, cellIndex)"
       >
+        <!--
+          오른쪽 마우스 클릭 => @contextmenu
+          prevent를 붙여야 기본 설정 동작이 실행 안됨
+        -->
         {{ cellDataText(rowIndex, cellIndex) }}
       </td>
     </tr>
@@ -13,12 +19,12 @@
 
 <script>
 import {mapState} from "vuex";
-import store, {CODE} from "./store";
+import store, {CODE, FLAG_CELL, NORMALIZE_CELL, OPEN_CELL, QUESTION_CELL} from "./store";
 
 export default {
   store,
   computed: {
-    ...mapState(["tableData"]),
+    ...mapState(["tableData", "halted"]),
     cellDataStyle: (state) => (rowIndex, cellIndex) => {
       let style = {
         background: "#fff"
@@ -47,7 +53,7 @@ export default {
     cellDataText: state => (rowIndex, cellIndex) => {
       switch (state.tableData[rowIndex][cellIndex]) {
         case CODE.CLICKED_MINE:
-          return "펑";
+          return "💥";
         case CODE.MINE:
           return "💣";
         case CODE.OPENED:
@@ -55,12 +61,41 @@ export default {
           return ""
         case CODE.QUESTION:
         case CODE.QUESTION_MINE:
-          return "?";
+          return "❓";
         case CODE.FLAG:
         case CODE.FLAG_MINE:
-          return "!";
+          return "🏳️";
         default:
           return "";
+      }
+    },
+  },
+  methods: {
+    onClickTd(rowIndex, cellIndex) {
+      if (this.halted) {
+        return;
+      }
+
+      this.$store.commit(OPEN_CELL, {row: rowIndex, cell: cellIndex});
+    },
+    onRightClickTd(rowIndex, cellIndex){
+      if (this.halted) {
+        return;
+      }
+
+      switch (this.tableData[rowIndex][cellIndex]) {
+        case CODE.NORMAL:
+        case CODE.MINE:
+          this.$store.commit(FLAG_CELL, {row: rowIndex, cell: cellIndex});
+          return;
+        case CODE.FLAG_MINE:
+        case CODE.FLAG:
+          this.$store.commit(QUESTION_CELL, {row: rowIndex, cell: cellIndex});
+          return;
+        case CODE.QUESTION_MINE:
+        case CODE.QUESTION:
+          this.$store.commit(NORMALIZE_CELL, {row: rowIndex, cell: cellIndex});
+          return;
       }
     },
   }
