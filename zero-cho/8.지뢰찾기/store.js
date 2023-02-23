@@ -66,7 +66,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
   },
   getters: {  // vue의 computed와 비슷 (cashing 가능)
     resultMessage(state) {
-      return `${state.timer}초 만에 모든 지뢰를 찾았습니다.`;
+      return `${state.timer}초 만에 끝났습니다.`;
     }
   },
   mutations: {  // state를 동기적으로 수정할 때 사용. state 수정시 mutations를 거쳐서 수정하는 것을 권장한다..
@@ -144,10 +144,10 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
 
           if (aroundMineCount === 0) {
             state.tableData[nextRow][nextCell] = CODE.OPENED;
+            openList.push([nextRow, nextCell]);
           } else {
             state.tableData[nextRow][nextCell] = aroundMineCount;
           }
-          openList.push([nextRow, nextCell]);
           state.openedCount++;
         }
 
@@ -158,11 +158,11 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
 
       if (aroundMineCount === 0) {
         state.tableData[row][cell] = CODE.OPENED;
+        openAroundCell(row, cell);
       } else {
         state.tableData[row][cell] = aroundMineCount;
       }
 
-      openAroundCell(row, cell);
       state.openedCount++;
 
       if (state.mineData.row * state.mineData.cell - state.mineData.mine === state.openedCount) {
