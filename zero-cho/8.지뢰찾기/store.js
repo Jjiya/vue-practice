@@ -59,6 +59,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
         cell: 0,
         mine: 0
       },
+      openedCount: 0,
       timer: 0,
       halted: true, // 게임 중단 상태
     }
@@ -83,6 +84,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
        */
 
       state.tableData = plantMine(row, cell, mine);
+      state.openedCount = 0;
       state.timer = 0;
       state.halted = false;
     },
@@ -146,6 +148,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
             state.tableData[nextRow][nextCell] = aroundMineCount;
           }
           openList.push([nextRow, nextCell]);
+          state.openedCount++;
         }
 
         openList.forEach(open => openAroundCell(open[0], open[1]));
@@ -160,6 +163,11 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
       }
 
       openAroundCell(row, cell);
+      state.openedCount++;
+
+      if (state.mineData.row * state.mineData.cell - state.mineData.mine === state.openedCount) {
+        state.halted = true;
+      }
     },
     [CLICK_MINE](state, {row, cell}) {
       state.tableData[row][cell] = CODE.CLICKED_MINE;
