@@ -19,7 +19,7 @@
 
 <script>
 import {mapState} from "vuex";
-import store, {CODE, FLAG_CELL, NORMALIZE_CELL, OPEN_CELL, QUESTION_CELL} from "./store";
+import store, {CLICK_MINE, CODE, FLAG_CELL, NORMALIZE_CELL, OPEN_CELL, QUESTION_CELL} from "./store";
 
 export default {
   store,
@@ -56,7 +56,6 @@ export default {
           return "💥";
         case CODE.MINE:
           return "💣";
-        case CODE.OPENED:
         case CODE.NORMAL:
           return ""
         case CODE.QUESTION:
@@ -65,8 +64,8 @@ export default {
         case CODE.FLAG:
         case CODE.FLAG_MINE:
           return "🏳️";
-        default:
-          return "";
+        default:  // OPENED
+          return state.tableData[rowIndex][cellIndex] || "";  // 주변에 지뢰가 없으면 빈칸
       }
     },
   },
@@ -76,9 +75,20 @@ export default {
         return;
       }
 
-      this.$store.commit(OPEN_CELL, {row: rowIndex, cell: cellIndex});
+      switch (this.tableData[rowIndex][cellIndex]) {
+        case CODE.NORMAL:
+        case CODE.FLAG:
+        case CODE.QUESTION:
+          this.$store.commit(OPEN_CELL, {row: rowIndex, cell: cellIndex});
+          return;
+        case CODE.MINE:
+        case CODE.FLAG_MINE:
+        case CODE.QUESTION_MINE:
+          this.$store.commit(CLICK_MINE, {row: rowIndex, cell: cellIndex});
+          return;
+      }
     },
-    onRightClickTd(rowIndex, cellIndex){
+    onRightClickTd(rowIndex, cellIndex) {
       if (this.halted) {
         return;
       }

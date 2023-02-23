@@ -87,9 +87,46 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
       state.halted = false;
     },
     [OPEN_CELL](state, {row, cell}) {
-      state.tableData[row][cell] = CODE.OPENED;
+      function checkAroundMine() {
+        //  동 동남 남 남서 서 서북 북 북동 순서 탐색
+        const aroundDirection = {
+          rowDirection: [0, 1, 1, 1, 0, -1, -1, -1],
+          cellDirection: [1, 1, 0, -1, -1, -1, 0, 1],
+        }
+
+        let mineCount = 0;
+
+        for (let i = 0; i < aroundDirection.rowDirection.length; i++) {
+          let nextRow = row + aroundDirection.rowDirection[i];
+          let nextCell = cell + aroundDirection.cellDirection[i];
+
+          if (!(0 <= nextRow && nextRow <= state.mineData.row) ||
+            !(0 <= nextCell && nextCell <= state.mineData.cell)) {
+            continue;
+          }
+
+          switch (state.tableData[nextRow][nextCell]) {
+            case CODE.QUESTION_MINE:
+            case CODE.FLAG_MINE:
+            case CODE.MINE:
+              mineCount++;
+          }
+        }
+
+        return mineCount;
+      }
+
+      const aroundMineCount = checkAroundMine();
+
+      if (aroundMineCount === 0) {
+        state.tableData[row][cell] = CODE.OPENED;
+      } else {
+        state.tableData[row][cell] = aroundMineCount;
+      }
     },
-    [CLICK_MINE](state) {
+    [CLICK_MINE](state, {row, cell}) {
+      state.tableData[row][cell] = CODE.CLICKED_MINE;
+      state.halted = true;
     },
     [FLAG_CELL](state, {row, cell}) {
       if (state.tableData[row][cell] === CODE.MINE || state.tableData[row][cell] === CODE.QUESTION_MINE) {
