@@ -60,6 +60,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
         mine: 0
       },
       timer: 0,
+      halted: true, // 게임 중단 상태
     }
   },
   getters: {  // vue의 computed와 비슷 (cashing 가능)
@@ -83,6 +84,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
 
       state.tableData = plantMine(row, cell, mine);
       state.timer = 0;
+      state.halted = false;
     },
     [OPEN_CELL](state) {
     },
@@ -95,6 +97,7 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
     [NORMALIZE_CELL](state) {
     },
     [INCREMENT_TIMER](state) {
+      state.timer++;
     },
   },
   actions: {  // 비동기를 사용할 때 || 여러 mutations를 연달아 실행할 때
