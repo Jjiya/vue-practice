@@ -87,21 +87,24 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
       state.halted = false;
     },
     [OPEN_CELL](state, {row, cell}) {
-      function checkAroundMine() {
-        //  동 동남 남 남서 서 서북 북 북동 순서 탐색
-        const aroundDirection = {
-          rowDirection: [0, 1, 1, 1, 0, -1, -1, -1],
-          cellDirection: [1, 1, 0, -1, -1, -1, 0, 1],
-        }
+      function isValidDirection(rowIndex, cellIndex) {
+        return (0 <= rowIndex && rowIndex < state.mineData.row) && (0 <= cellIndex && cellIndex < state.mineData.cell);
+      }
 
+      //  동 동남 남 남서 서 서북 북 북동 순서 탐색
+      const aroundDirection = {
+        rowDirection: [0, 1, 1, 1, 0, -1, -1, -1],
+        cellDirection: [1, 1, 0, -1, -1, -1, 0, 1],
+      };
+
+      function checkAroundMine(rowIndex, cellIndex) { // 인접한 8칸에 지뢰가 몇개있는지 확인
         let mineCount = 0;
 
         for (let i = 0; i < aroundDirection.rowDirection.length; i++) {
-          let nextRow = row + aroundDirection.rowDirection[i];
-          let nextCell = cell + aroundDirection.cellDirection[i];
+          let nextRow = rowIndex + aroundDirection.rowDirection[i];
+          let nextCell = cellIndex + aroundDirection.cellDirection[i];
 
-          if (!(0 <= nextRow && nextRow <= state.mineData.row) ||
-            !(0 <= nextCell && nextCell <= state.mineData.cell)) {
+          if (!isValidDirection(nextRow, nextCell)) {
             continue;
           }
 
@@ -116,13 +119,47 @@ const store = createStore({ // import 시 변수 명 임시 설정 가능
         return mineCount;
       }
 
-      const aroundMineCount = checkAroundMine();
+      function openAroundCell(rowIndex, cellIndex) {  // 재귀함수로, 주변에 4면이 인접한 빈칸이 있으면 열어줌
+        if (!isValidDirection(rowIndex, cellIndex)) {
+          return;
+        }
+
+        let openList = [];
+
+        for (let i = 0; i < aroundDirection.rowDirection.length; i += 2) {  // 인접한 4면만 열어주기
+          let nextRow = rowIndex + aroundDirection.rowDirection[i];
+          let nextCell = cellIndex + aroundDirection.cellDirection[i];
+
+          if (!isValidDirection(nextRow, nextCell) || 0 <= state.tableData[nextRow][nextCell]) {
+            continue;
+          }
+
+          if ([CODE.QUESTION_MINE, CODE.FLAG_MINE, CODE.MINE].includes(state.tableData[nextRow][nextCell])) {
+            continue;
+          }
+
+          const aroundMineCount = checkAroundMine(nextRow, nextCell);
+
+          if (aroundMineCount === 0) {
+            state.tableData[nextRow][nextCell] = CODE.OPENED;
+          } else {
+            state.tableData[nextRow][nextCell] = aroundMineCount;
+          }
+          openList.push([nextRow, nextCell]);
+        }
+
+        openList.forEach(open => openAroundCell(open[0], open[1]));
+      }
+
+      const aroundMineCount = checkAroundMine(row, cell);
 
       if (aroundMineCount === 0) {
         state.tableData[row][cell] = CODE.OPENED;
       } else {
         state.tableData[row][cell] = aroundMineCount;
       }
+
+      openAroundCell(row, cell);
     },
     [CLICK_MINE](state, {row, cell}) {
       state.tableData[row][cell] = CODE.CLICKED_MINE;

@@ -46,6 +46,8 @@ export default {
         case CODE.FLAG_MINE:
           style.background = "red";
           break;
+        default:
+          style.background = "#fff";
       }
 
       return style;
